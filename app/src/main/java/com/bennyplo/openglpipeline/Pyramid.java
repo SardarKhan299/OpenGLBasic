@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-public class Triangle {
+public class Pyramid {
     private final String vertexShaderCode =
             "attribute vec3 aVertexPosition;"+"uniform mat4 uMVPMatrix;varying vec4 vColor;" +
                     "void main() {gl_Position = uMVPMatrix *vec4(aVertexPosition,1.0);" +
@@ -23,18 +23,31 @@ public class Triangle {
     static final int COORDS_PER_VERTEX = 3;
     private int vertexCount;// number of vertices
     private final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex
-    static float triangleVertex[]= {
-            -1.0f,-1.0f,1.0f,
-            1.0f,-1.0f,1.0f,
-            0.0f,1.0f,1.0f};
-    public Triangle(){
-        // initialize vertex byte buffer for shape coordinates
-        ByteBuffer bb = ByteBuffer.allocateDirect(triangleVertex.length * 4);// (# of coordinate values * 4 bytes per float)
+    static float pyramidVertex[] = {
+            // front face
+            0.0f,1.0f,0.0f,
+            -1f,-1f,-1f,
+            1f,-1f,1f,
+            // right face
+            0f,1f,0f,
+            1f,-1f,1f,
+            1f,-1f,-1f,
+            // back face
+            0f,1f,0f,
+            1f,-1f,-1f,
+            -1f,-1f,-1f,
+            // left face
+            0f,1f,0f,
+            -1f,-1f,-1f,
+            -1f,-1f,1f
+    };
+    public Pyramid(){
+        ByteBuffer bb = ByteBuffer.allocateDirect(pyramidVertex.length*4);
         bb.order(ByteOrder.nativeOrder());
         vertexBuffer = bb.asFloatBuffer();
-        vertexBuffer.put(triangleVertex);
+        vertexBuffer.put(pyramidVertex);
         vertexBuffer.position(0);
-        vertexCount=triangleVertex.length/COORDS_PER_VERTEX;
+        vertexCount = pyramidVertex.length/COORDS_PER_VERTEX;
         // prepare shaders and OpenGL program
         int vertexShader = MyRenderer.loadShader(GLES32.GL_VERTEX_SHADER, vertexShaderCode);
         int fragmentShader = MyRenderer.loadShader(GLES32.GL_FRAGMENT_SHADER, fragmentShaderCode);
@@ -47,9 +60,6 @@ public class Triangle {
         mPositionHandle = GLES32.glGetAttribLocation(mProgram, "aVertexPosition");
         // Enable a handle to the triangle vertices
         GLES32.glEnableVertexAttribArray(mPositionHandle);
-        // get handle to shape's transformation matrix
-        mMVPMatrixHandle = GLES32.glGetUniformLocation(mProgram, "uMVPMatrix");
-        MyRenderer.checkGlError("glGetUniformLocation");
     }
 
     public void draw(float[] mvpMatrix) {
@@ -59,19 +69,5 @@ public class Triangle {
         //set the attribute of the vertex to point to the vertex buffer
         GLES32.glVertexAttribPointer(mPositionHandle, COORDS_PER_VERTEX,
                 GLES32.GL_FLOAT, false, vertexStride, vertexBuffer);
-        float vertices[] = new float[364 * 3];
-        vertices[0] = 0;
-        vertices[1] = 0;
-        vertices[2] = 0;
-
-
-
-        for(int i =1; i <364; i++){
-            vertices[(i * 3)+ 0] = (float) (radious * Math.cos((3.14/180) * (float)i ) + vertices[0]);
-            vertices[(i * 3)+ 1] = (float) (radious * Math.sin((3.14/180) * (float)i ) + vertices[1]);
-            vertices[(i * 3)+ 2] = 0;
-        }
-        // Draw the triangle
-        GLES32.glDrawArrays(GLES32.GL_POINTS, 0, vertexCount);
     }
 }
