@@ -10,11 +10,10 @@ public class Triangle {
     private final String vertexShaderCode =
             "attribute vec3 aVertexPosition;"+"uniform mat4 uMVPMatrix;varying vec4 vColor;" +
                     "void main() {gl_Position = uMVPMatrix *vec4(aVertexPosition,1.0);" +
-                    "gl_PointSize = 40.0;"+
                     "vColor=vec4(1.0,0.0,0.0,1.0);}";
     private final String fragmentShaderCode = "precision mediump float;varying vec4 vColor; "+
             "void main() {gl_FragColor = vColor;}";
-    float radious=.5f;
+
     private final FloatBuffer vertexBuffer;
     private final int mProgram;
     private int mPositionHandle;
@@ -59,19 +58,7 @@ public class Triangle {
         //set the attribute of the vertex to point to the vertex buffer
         GLES32.glVertexAttribPointer(mPositionHandle, COORDS_PER_VERTEX,
                 GLES32.GL_FLOAT, false, vertexStride, vertexBuffer);
-        float vertices[] = new float[364 * 3];
-        vertices[0] = 0;
-        vertices[1] = 0;
-        vertices[2] = 0;
-
-
-
-        for(int i =1; i <364; i++){
-            vertices[(i * 3)+ 0] = (float) (radious * Math.cos((3.14/180) * (float)i ) + vertices[0]);
-            vertices[(i * 3)+ 1] = (float) (radious * Math.sin((3.14/180) * (float)i ) + vertices[1]);
-            vertices[(i * 3)+ 2] = 0;
-        }
         // Draw the triangle
-        GLES32.glDrawArrays(GLES32.GL_POINTS, 0, vertexCount);
+        GLES32.glDrawArrays(GLES32.GL_TRIANGLES, 0, vertexCount);
     }
 }

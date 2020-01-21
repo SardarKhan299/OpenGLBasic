@@ -15,12 +15,13 @@ public class MyRenderer implements GLSurfaceView.Renderer {
     private final float[] mMVMatrix=new float[16];//model view matrix
     private final float[] mModelMatrix=new float[16];//model  matrix
     private Triangle mtriangle;
-
+    private Pyramid mPyramid;
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         // Set the background frame color to black
         GLES32.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        mtriangle=new Triangle();
+        //mtriangle=new Triangle();
+        mPyramid = new Pyramid();
     }
     public static void checkGlError(String glOperation) {
         int error;
@@ -66,6 +67,7 @@ public class MyRenderer implements GLSurfaceView.Renderer {
         Matrix.multiplyMM(mMVMatrix,0,mViewMatrix,0,mModelMatrix,0);
         Matrix.multiplyMM(mMVPMatrix,0,mProjectionMatrix,0,mMVMatrix,0);
 
-        mtriangle.draw(mMVPMatrix);
+        //mtriangle.draw(mMVPMatrix);
+        mPyramid.draw(mMVPMatrix);
     }
 }
